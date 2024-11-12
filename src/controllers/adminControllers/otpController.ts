@@ -31,11 +31,10 @@ export const verifySignUpOTP = async (req: Request, res: Response) => {
     }
 
     const newAdmin = new AdminSchema({
-      FirstName: adminData.firstName ,
-      LastName: adminData.lastName ,
+      fullName: adminData.firstName + adminData.lastName,
       email: adminData.email,
-      PhoneNumber: adminData.phoneNumber,
-      Password: adminData.password,
+      phoneNumber: adminData.phoneNumber,
+      password: adminData.password,
       isVerified: true,
     });
 
@@ -51,7 +50,7 @@ export const verifySignUpOTP = async (req: Request, res: Response) => {
     const err = error as Error;
     res
       .status(500)
-      .json({ success: false, message: `Server error: ${err.message}` });
+      .json({ success: false, message: `Server serror: ${err.message}` });
     return;
   }
 };

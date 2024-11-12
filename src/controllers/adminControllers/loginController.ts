@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import AdminSchema from "../../models/adminModels/adminSchema";
-import {  generateTokens } from "../../utils/jwt";
+import { generateTokens } from "../../utils/jwt";
 import { comparePassword } from "../../utils/bcrypt";
 
 const login = async (req: Request, res: Response) => {
@@ -48,13 +48,13 @@ const login = async (req: Request, res: Response) => {
     res.cookie("token", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 1000, 
-    });
+      maxAge: 60 * 60 * 1000,
+     });
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
