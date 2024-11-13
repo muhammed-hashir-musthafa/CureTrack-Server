@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import AdminSchema from "../../models/adminModels/adminSchema";
 import pendingAdmins from "../../utils/pendingAdmin";
 import { verifyOTP } from "../../utils/otp";
+import { generateTokens } from "../../utils/jwt";
 
 export const verifySignUpOTP = async (req: Request, res: Response) => {
   try {
@@ -31,7 +32,7 @@ export const verifySignUpOTP = async (req: Request, res: Response) => {
     }
 
     const newAdmin = new AdminSchema({
-      fullName: adminData.firstName + adminData.lastName,
+      fullName: adminData.firstName + " " + adminData.lastName,
       email: adminData.email,
       phoneNumber: adminData.phoneNumber,
       password: adminData.password,
@@ -40,6 +41,31 @@ export const verifySignUpOTP = async (req: Request, res: Response) => {
 
     await newAdmin.save();
     delete pendingAdmins[email];
+
+    const admin = await AdminSchema.findOne({ email });
+    if (!admin) {
+      res.status(402).json({
+        success: false,
+        message: "No admin found. Please create an account",
+      });
+      return;
+    }
+    const { accessToken, refreshToken } = generateTokens(admin.id);
+
+    admin.refreshToken = refreshToken;
+    await admin.save();
+
+    res.cookie("token", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({
       success: true,

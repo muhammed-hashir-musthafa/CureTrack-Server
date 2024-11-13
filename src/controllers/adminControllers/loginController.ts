@@ -35,7 +35,7 @@ const login = async (req: Request, res: Response) => {
     if (!validatedAdmin) {
       res.status(403).json({
         success: false,
-        message: "Invalid password",
+        message: "Invalid username/password",
       });
       return;
     }
