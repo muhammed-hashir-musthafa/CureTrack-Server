@@ -1,106 +1,106 @@
 import mongoose, { Schema, Document, ObjectId } from "mongoose";
 
-export interface IVendors extends Document {
-  vendorRole: string;
+export interface IVendor extends Document {
+  vendorRole: "hospital" | "lab" | "pharmacy";
   name: string;
   password: string;
+  email: string;
   isVerified: boolean;
   license: string;
-  email: string;
   address: {
-    buildingNumber: string | null;
-    city: string | null;
-    country: string[] | null;
-    pincode: number | null;
-    state: string[] | null;
-    street: string | null;
-  } | null;
-  serviceOffered: mongoose.Schema.Types.Mixed[];
-  licenseExpiry: Date | null;
-  isApprovedByAdmin: boolean | null;
-  vendorStatus: string[] | null;
+    buildingNumber?: string;
+    city?: string;
+    country?: string[];
+    pincode?: number;
+    state?: string[];
+    street?: string;
+  };
+  serviceOffered: Record<string, any>[];
+  licenseExpiry?: Date;
+  isApprovedByAdmin?: boolean;
+  vendorStatus?: string[];
   doctors: {
-    availableTimings: string[] | null;
-    consultationFee: number | null;
-    createdAt: Date | null;
-    doctorId: ObjectId | null;
-    vendorId: ObjectId | null;
+    availableTimings?: string[];
+    consultationFee?: number;
+    createdAt?: Date;
+    doctorId?: ObjectId;
+    vendorId?: ObjectId;
   }[];
   phoneNumber: number;
   createdAt: Date;
-  operationalHours: string[] | null;
+  operationalHours?: string[];
   labs: {
-    _id: ObjectId | null;
+    _id?: ObjectId;
     tests: {
-      availableDays: Date | null;
-      createdAt: Date | null;
-      testDescription: string | null;
-      testName: string | null;
-      testPrice: string | null;
-      turnAroundTime: string | null;
+      availableDays?: Date;
+      createdAt?: Date;
+      testDescription?: string;
+      testName?: string;
+      testPrice?: string;
+      turnAroundTime?: string;
     }[];
-    userReports: mongoose.Schema.Types.Mixed[];
+    userReports: Record<string, any>[];
   }[];
   pharmacies: {
     medicines: {
-      createdAt: Date | null;
-      manufacturer: string | null;
-      medicineId: string | null;
-      medicineName: string | null;
-      medicineType: string | null;
-      prescriptionRequired: boolean | null;
-      price: number | null;
-      stock: number | null;
+      createdAt?: Date;
+      manufacturer?: string;
+      medicineId?: string;
+      medicineName?: string;
+      medicineType?: string;
+      prescriptionRequired?: boolean;
+      price?: number;
+      stock?: number;
     }[];
     orders: {
-      createdAt: Date | null;
-      deliveryDate: Date | null;
-      isCancel: boolean | null;
-      isReturn: boolean | null;
-      orderItems: mongoose.Schema.Types.Mixed[];
-      orderStatus: string | null;
-      orderTotal: number | null;
-      paymentStatus: string | null;
-      reason: string | null;
+      createdAt?: Date;
+      deliveryDate?: Date;
+      isCancel?: boolean;
+      isReturn?: boolean;
+      orderItems: Record<string, any>[];
+      orderStatus?: string;
+      orderTotal?: number;
+      paymentStatus?: string;
+      reason?: string;
     }[];
-    userId: ObjectId | null;
+    userId?: ObjectId;
   }[];
-  appointments: ObjectId[] | null;
+  appointments?: ObjectId[];
   hospital: {
     facilities: {
       ambulances: {
-        contactName: string | null;
-        contactNumber: number | null;
-        vehicleNumber: string | null;
+        contactName?: string;
+        contactNumber?: number;
+        vehicleNumber?: string;
       }[];
       bloodGroup: {
-        availability: number | null;
+        availability?: number;
       }[];
       ICU: {
-        available: number | null;
-        total: number | null;
+        available?: number;
+        total?: number;
       };
       insurance: {
-        insurancePolicy: string | null;
-        insuranceType: string | null;
+        insurancePolicy?: string;
+        insuranceType?: string;
       }[];
       ventilators: {
-        available: number | null;
-        total: number | null;
+        available?: number;
+        total?: number;
       };
     }[];
   }[];
-  payment: mongoose.Schema.Types.Mixed[];
-  vendorId: string | null;
-  notification: ObjectId[] | null;
-  subscription: ObjectId | null;
-  deletedBy: string | null;
-  isDelete: boolean | null;
-  createdBy: string | null;
-  isActive: boolean | null;
+  payment: Record<string, any>[];
+  vendorId?: string;
+  notification?: ObjectId[];
+  subscription?: ObjectId;
+  deletedBy?: string;
+  isDeleted?: boolean;
+  createdBy?: string;
+  isActive?: boolean;
 }
 
-const VendorsSchema: Schema = new Schema(
+const VendorSchema: Schema = new Schema(
   {
     vendorRole: {
       type: String,
@@ -109,8 +109,9 @@ const VendorsSchema: Schema = new Schema(
     },
     name: { type: String, required: true },
     password: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    isVerified: { type: Boolean, default: false },
     license: { type: String, required: true },
-    email: { type: String, required: true },
     address: {
       buildingNumber: { type: String },
       city: { type: String },
@@ -127,13 +128,13 @@ const VendorsSchema: Schema = new Schema(
       {
         availableTimings: [{ type: String }],
         consultationFee: { type: Number },
-        createdAt: { type: Date },
+        createdAt: { type: Date, default: Date.now },
         doctorId: { type: Schema.Types.ObjectId },
         vendorId: { type: Schema.Types.ObjectId },
       },
     ],
     phoneNumber: { type: Number, required: true },
-    createdAt: { type: Date, required: true, default: Date.now() },
+    createdAt: { type: Date, default: Date.now },
     operationalHours: [{ type: String }],
     labs: [
       {
@@ -217,18 +218,17 @@ const VendorsSchema: Schema = new Schema(
       },
     ],
     payment: [{ type: mongoose.Schema.Types.Mixed }],
-    vendorId: { type: String },
+    vendorId: { type: String, unique: true },
     notification: [{ type: Schema.Types.ObjectId }],
     subscription: { type: Schema.Types.ObjectId },
     deletedBy: { type: String },
-    isDelete: { type: Boolean },
+    isDeleted: { type: Boolean, default: false },
     createdBy: { type: String },
     isActive: { type: Boolean },
-    isVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
 
-const Vendors = mongoose.model<IVendors>("Vendors", VendorsSchema);
+const Vendor = mongoose.model<IVendor>("Vendor", VendorSchema);
 
-export default Vendors;
+export default Vendor;
