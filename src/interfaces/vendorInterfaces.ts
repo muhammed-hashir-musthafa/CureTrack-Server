@@ -12,13 +12,13 @@ export interface SignUpBody {
 export interface IAmbulance {
   vehicleNumber: string;
   vehicleType: string;
-  _id?: Types.ObjectId; // _id is optional
+  _id?: string; // MongoDB uses _id as the unique identifier
   driverName: string;
   contactNumber: string;
 }
 
 export interface IFacility {
-  _id?: Types.ObjectId; // _id is optional
+  _id?: string; // MongoDB uses _id as the unique identifier
   name: string;
   value: string | number;
   type: "number" | "text";

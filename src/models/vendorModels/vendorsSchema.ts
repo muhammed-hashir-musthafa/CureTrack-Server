@@ -189,8 +189,9 @@ const VendorSchema: Schema = new Schema(
           {
             ambulances: [
               {
-                contactName: { type: String },
+                driverName: { type: String },
                 contactNumber: { type: Number },
+                vehicleType: { type: String },
                 vehicleNumber: { type: String },
               },
             ],

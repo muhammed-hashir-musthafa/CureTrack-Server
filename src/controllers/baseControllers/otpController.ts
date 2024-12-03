@@ -25,6 +25,13 @@ export const verifySignUpOTP = async (req: Request, res: Response) => {
 
     const adminData = pendingAdmins[email];
     if (adminData) {
+      if (!adminData.email) {
+        res.status(400).json({
+          success: false,
+          message: "Admin email is missing or invalid.",
+        });
+        return;
+      }
       const newAdmin = new AdminSchema({
         fullName: `${adminData.firstName} ${adminData.lastName}`,
         email: adminData.email,
@@ -46,6 +53,14 @@ export const verifySignUpOTP = async (req: Request, res: Response) => {
 
     const vendorData = pendingVendors[email];
     if (vendorData) {
+      if (!vendorData.email) {
+        res.status(400).json({
+          success: false,
+          message: "Vendor email is missing or invalid.",
+        });
+        return;
+      }
+
       const newVendor = new VendorsSchema({
         name: vendorData.name,
         license: vendorData.license,
@@ -64,6 +79,12 @@ export const verifySignUpOTP = async (req: Request, res: Response) => {
       });
       return;
     }
+
+    res.status(404).json({
+      success: false,
+      message: "No pending signup found for this email.",
+    });
+    return;
   } catch (error) {
     const err = error as Error;
     res

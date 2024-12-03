@@ -4,7 +4,7 @@ import { IAmbulance, IFacility } from "../../interfaces/vendorInterfaces";
 
 export const getAllFacilities = async (req: Request, res: Response) => {
   try {
-    const { hospitalId } = req.params; // Get hospitalId from route parameters
+    const { hospitalId } = req.params;
     const hospitalData = await HospitalFacility.findOne({ hospitalId });
     if (!hospitalData) {
       res
@@ -124,7 +124,7 @@ export const addNewAmbulance = async (req: Request, res: Response) => {
 
 export const updateFacility = async (req: Request, res: Response) => {
   try {
-    const { hospitalId, id } = req.params; // hospitalId and facility id
+    const { hospitalId, id } = req.params;
     const { value } = req.body;
 
     const hospitalData = await HospitalFacility.findOne({ hospitalId });
@@ -135,7 +135,6 @@ export const updateFacility = async (req: Request, res: Response) => {
       return;
     }
 
-    // Find the facility by its _id
     const facility = hospitalData.facilities.find(
       (facility) => facility._id?.toString() === id
     );
@@ -144,7 +143,6 @@ export const updateFacility = async (req: Request, res: Response) => {
       return;
     }
 
-    // Update the value
     facility.value = value;
     await hospitalData.save();
 
@@ -161,8 +159,8 @@ export const updateFacility = async (req: Request, res: Response) => {
 };
 export const updateAmbulance = async (req: Request, res: Response) => {
   try {
-    const { hospitalId, id } = req.params; // hospitalId and ambulance id
-    const { field, value } = req.body; // Dynamic field update
+    const { hospitalId, id } = req.params;
+    const { field, value } = req.body;
 
     const hospitalData = await HospitalFacility.findOne({ hospitalId });
     if (!hospitalData) {
@@ -172,7 +170,6 @@ export const updateAmbulance = async (req: Request, res: Response) => {
       return;
     }
 
-    // Find the ambulance by its _id
     const ambulance = hospitalData.ambulances.find(
       (ambulance) => ambulance._id?.toString() === id
     );
@@ -181,9 +178,8 @@ export const updateAmbulance = async (req: Request, res: Response) => {
       return;
     }
 
-    // Update the specific field dynamically
     if (field in ambulance) {
-      (ambulance as any)[field] = value; // Use type casting for dynamic key access
+      (ambulance as any)[field] = value;
       await hospitalData.save();
 
       res.status(200).json({
@@ -203,7 +199,7 @@ export const updateAmbulance = async (req: Request, res: Response) => {
 
 export const deleteFacility = async (req: Request, res: Response) => {
   try {
-    const { hospitalId, id } = req.params; // hospitalId and facility id
+    const { hospitalId, id } = req.params;
 
     const hospitalData = await HospitalFacility.findOne({ hospitalId });
     if (!hospitalData) {
@@ -214,14 +210,14 @@ export const deleteFacility = async (req: Request, res: Response) => {
     }
 
     const facilityIndex = hospitalData.facilities.findIndex(
-      (facility) => facility._id?.toString() === id // Convert _id to string for comparison
+      (facility) => facility._id?.toString() === id
     );
     if (facilityIndex === -1) {
       res.status(404).json({ success: false, message: "Facility not found" });
       return;
     }
 
-    hospitalData.facilities.splice(facilityIndex, 1); // Remove the facility
+    hospitalData.facilities.splice(facilityIndex, 1);
     await hospitalData.save();
 
     res.status(200).json({
@@ -237,7 +233,7 @@ export const deleteFacility = async (req: Request, res: Response) => {
 
 export const deleteAmbulance = async (req: Request, res: Response) => {
   try {
-    const { hospitalId, id } = req.params; // hospitalId and ambulance id
+    const { hospitalId, id } = req.params;
 
     const hospitalData = await HospitalFacility.findOne({ hospitalId });
     if (!hospitalData) {
@@ -248,14 +244,14 @@ export const deleteAmbulance = async (req: Request, res: Response) => {
     }
 
     const ambulanceIndex = hospitalData.ambulances.findIndex(
-      (ambulance) => ambulance._id?.toString() === id // Convert _id to string for comparison
+      (ambulance) => ambulance._id?.toString() === id
     );
     if (ambulanceIndex === -1) {
       res.status(404).json({ success: false, message: "Ambulance not found" });
       return;
     }
 
-    hospitalData.ambulances.splice(ambulanceIndex, 1); // Remove the ambulance
+    hospitalData.ambulances.splice(ambulanceIndex, 1);
     await hospitalData.save();
 
     res.status(200).json({
